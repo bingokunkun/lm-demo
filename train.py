@@ -1,7 +1,5 @@
 import time
 
-a = open('model.txt', 'r').readlines()
-b = open('data.txt', 'r').readlines()
-print('data', b)
-print(a)
-open('model.txt', 'w').write(str(time.time()))
+a = open('dataset/test.txt', 'r').readlines()
+print('data', a)
+open('saved_model/model.txt', 'w').write(str(time.time()))
