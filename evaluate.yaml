@@ -30,7 +30,7 @@ spec:
                   - command:
                       - sh
                       - '-c'
-                      - python3 lm-demo/retrain.py
+                      - python3 lm-demo/evaluate.py
                     env: []
                     image: 10.24.45.22/library/python
                     name: tensorflow
