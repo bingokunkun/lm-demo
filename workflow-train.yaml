@@ -19,7 +19,7 @@ spec:
       kind: TensorFlowTrainingJob
       metadata:
         name: test-ah
-        namespace: newcreate
+        namespace: asset-workflow
       spec:
         replicaSpecs:
           - replicas: 1
