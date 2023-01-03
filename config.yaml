@@ -2,3 +2,5 @@ train:
   files: [workflow-train.yaml]
 continue:
   files: [retrain.yaml]
+evaluate:
+  files: [evaluate.yaml]
