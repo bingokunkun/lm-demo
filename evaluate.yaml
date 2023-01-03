@@ -1,0 +1,70 @@
+# workflow-train.yaml
+apiVersion: batch.tensorstack.dev/v1beta1
+kind: WorkflowTemplate
+metadata:
+  name: evaluate
+spec:
+  params:
+    - name: pvc_name
+  workspaces: []
+  results: []
+  type: Resource
+  resource:
+    successRules:
+      fieldSelector: status.phase==Succeeded
+    failureRules:
+      fieldSelector: status.phase==Failed
+    manifest: |
+      apiVersion: batch.tensorstack.dev/v1beta1
+      kind: TensorFlowTrainingJob
+      metadata:
+        generateName: test-ah
+        namespace: asset-workflow
+      spec:
+        replicaSpecs:
+          - replicas: 1
+            restartPolicy: OnFailure
+            template:
+              spec:
+                containers:
+                  - command:
+                      - sh
+                      - '-c'
+                      - python3 lm-demo/retrain.py
+                    env: []
+                    image: 10.24.45.22/library/python
+                    name: tensorflow
+                    resources:
+                      limits:
+                        cpu: '1'
+                        memory: 1Gi
+                      requests:
+                        cpu: 500m
+                        memory: 500Mi
+                    volumeMounts:
+                      - mountPath: /home
+                        name: aaa
+                    workingDir: /home
+                volumes:
+                  - name: aaa
+                    persistentVolumeClaim:
+                      claimName: $(params.pvc_name)
+            type: worker
+        runPolicy:
+          cleanUpPolicy: Unfinished
+        scheduler: {}
+---
+apiVersion: batch.tensorstack.dev/v1beta1
+kind: WorkflowRun
+metadata:
+  name: evaluate
+  labels:
+    batch.tensorstack.dev/workflowTemplate: evaluate-pytorch
+spec:
+  params:
+    - name: pvc_name
+      value: $(pvc-name)
+  serviceAccountName: managed-project-sa
+  timeout: 1h0m0s
+  workflowTemplateRef: evaluate
+  workspaces: []
